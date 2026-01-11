@@ -25,8 +25,8 @@ public class UserController {
     @Path("/saveUser")
     public Response saveUser(CreateUserRequest user) {
         UserResponse userResponse = userService.saveUser(user);
-        return Response.ok(
-            userResponse
-        ).build();
+        return Response.status(Response.Status.CREATED)
+               .entity(userResponse)
+               .build();
     }
 }
