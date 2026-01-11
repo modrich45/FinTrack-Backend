@@ -1,5 +1,7 @@
-package com.fintrack.user.controllers;
+package com.fintrack.user.controller;
 
+import com.fintrack.user.dto.CreateUserRequest;
+import com.fintrack.user.dto.UserResponse;
 import com.fintrack.user.entity.User;
 import com.fintrack.user.service.UserService;
 
@@ -21,8 +23,10 @@ public class UserController {
     
     @POST
     @Path("/saveUser")
-    public Response saveUser(User user) {
-        User savedUser = userService.saveUser(user);
-        return Response.ok(savedUser).build();
+    public Response saveUser(CreateUserRequest user) {
+        UserResponse userResponse = userService.saveUser(user);
+        return Response.ok(
+            userResponse
+        ).build();
     }
 }
