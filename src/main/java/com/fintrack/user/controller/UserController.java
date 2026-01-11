@@ -6,9 +6,12 @@ import com.fintrack.user.entity.User;
 import com.fintrack.user.service.UserService;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -23,10 +26,19 @@ public class UserController {
     
     @POST
     @Path("/saveUser")
-    public Response saveUser(CreateUserRequest user) {
+    public Response saveUser(@Valid CreateUserRequest user) {
         UserResponse userResponse = userService.saveUser(user);
         return Response.status(Response.Status.CREATED)
                .entity(userResponse)
                .build();
     }
+
+    @GET
+    @Path("/{id}")
+    public Response getUserById(@PathParam("id") Long id) {
+        UserResponse userResponse = userService.getUserById(id);
+        return Response.status(Response.Status.CREATED).entity(userResponse).build();
+    }
+
+
 }

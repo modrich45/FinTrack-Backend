@@ -12,7 +12,7 @@ public class User extends PanacheEntityBase {
     
     private String name;
     
-   
+    @Column(unique = true)
     private String email;
 
     public User() {
