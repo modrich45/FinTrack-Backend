@@ -38,7 +38,7 @@ public class Account extends PanacheEntityBase {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AccountStatus accountStatus;
+    private AccountStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "kyc_status", nullable = false)
@@ -69,8 +69,8 @@ public class Account extends PanacheEntityBase {
         return accountType;
     }
 
-    public AccountStatus getAccountStatus() {
-        return accountStatus;
+    public AccountStatus getStatus() {
+        return status;
     }
 
     public KycStatus getKycStatus() {
@@ -102,7 +102,7 @@ public class Account extends PanacheEntityBase {
         acc.userId = userId;
         acc.accountType = type;
         acc.currency = currency;
-        acc.accountStatus = AccountStatus.ACTIVE;
+        acc.status = AccountStatus.ACTIVE;
         acc.kycStatus = KycStatus.NOT_STARTED;
         acc.createdAt = Instant.now();
         acc.updatedAt = acc.createdAt;
@@ -110,18 +110,18 @@ public class Account extends PanacheEntityBase {
     }
 
     public void freeze() {
-        if (accountStatus == AccountStatus.CLOSED) {
+        if (status == AccountStatus.CLOSED) {
             throw new IllegalStateException("Closed account cannot be frozen");
         }
-        this.accountStatus = AccountStatus.FROZEN;
+        this.status = AccountStatus.FROZEN;
         touch();
     }
 
     public void close() {
-        if (accountStatus == AccountStatus.CLOSED) {
+        if (status == AccountStatus.CLOSED) {
             return;
         }
-        this.accountStatus = AccountStatus.CLOSED;
+        this.status = AccountStatus.CLOSED;
         touch();
     }
 
@@ -130,6 +130,30 @@ public class Account extends PanacheEntityBase {
             throw new IllegalStateException("Invalid KYC transition");
         }
         this.kycStatus = KycStatus.VERIFIED;
+        touch();
+    }
+
+    public void suspend() {
+        if (status != AccountStatus.ACTIVE) {
+            throw new IllegalStateException("Only active accounts can be suspended");
+        }
+        this.status = AccountStatus.SUSPENDED;
+        touch();
+    }
+
+    public void activate() {
+        if (status != AccountStatus.SUSPENDED) {
+            throw new IllegalStateException("Only suspended accounts can be activated");
+        }
+        this.status = AccountStatus.ACTIVE;
+        touch();
+    }
+
+    public void submitKyc() {
+        if (kycStatus != KycStatus.NOT_STARTED) {
+            throw new IllegalStateException("KYC already submitted");
+        }
+        this.kycStatus = KycStatus.PENDING;
         touch();
     }
 
