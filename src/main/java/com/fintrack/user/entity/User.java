@@ -20,9 +20,6 @@ public class User extends PanacheEntityBase {
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
     public User(String name, String email) {
         this.name = name;
         this.email = email;
